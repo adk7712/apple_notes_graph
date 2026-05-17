@@ -6,7 +6,7 @@ import euler from 'cytoscape-euler';
 // Register euler extension
 cytoscape.use(euler);
 
-const Graph = ({ data, onNodeClick, edgeThickness = 1.0 }) => {
+const Graph = ({ data, onNodeClick, edgeThickness = 1.0, edgeOpacity = 0.3 }) => {
   const [cy, setCy] = useState(null);
 
   const elements = useMemo(() => {
@@ -79,12 +79,12 @@ const Graph = ({ data, onNodeClick, edgeThickness = 1.0 }) => {
       selector: 'edge',
       style: {
         'width': edgeThickness,
-        'line-color': '#e0e0e0',
-        'target-arrow-color': '#e0e0e0',
+        'line-color': '#666',
+        'target-arrow-color': '#666',
         'target-arrow-shape': 'none',
         'curve-style': 'haystack',
         'haystack-radius': 0,
-        'opacity': 0.3,
+        'opacity': edgeOpacity,
         'z-index': 1
       }
     },
@@ -93,7 +93,7 @@ const Graph = ({ data, onNodeClick, edgeThickness = 1.0 }) => {
       style: {
         'width': edgeThickness * 2,
         'line-color': '#0071e3',
-        'opacity': 0.8
+        'opacity': Math.min(edgeOpacity * 2.5, 1.0)
       }
     },
     {
@@ -114,7 +114,7 @@ const Graph = ({ data, onNodeClick, edgeThickness = 1.0 }) => {
         'min-zoomed-font-size': '40px'
       }
     }
-  ], [edgeThickness]);
+  ], [edgeThickness, edgeOpacity]);
 
   useEffect(() => {
     if (!cy) return;

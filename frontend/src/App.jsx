@@ -11,6 +11,7 @@ function App() {
   const [selectedNoteId, setSelectedNoteId] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [edgeThickness, setEdgeThickness] = useState(1.0);
+  const [edgeOpacity, setEdgeOpacity] = useState(0.3);
 
   const filteredData = (function() {
     if (!searchQuery) return graphData;
@@ -36,7 +37,7 @@ function App() {
         </div>
         <div className="controls">
           <div className="slider-control">
-            <label htmlFor="edge-thickness">Edge Thickness</label>
+            <label htmlFor="edge-thickness">Thickness</label>
             <input 
               id="edge-thickness"
               type="range" 
@@ -47,6 +48,19 @@ function App() {
               onChange={(e) => setEdgeThickness(parseFloat(e.target.value))} 
             />
             <span className="slider-value">{edgeThickness.toFixed(1)}</span>
+          </div>
+          <div className="slider-control">
+            <label htmlFor="edge-opacity">Darkness</label>
+            <input 
+              id="edge-opacity"
+              type="range" 
+              min="0.0" 
+              max="1.0" 
+              step="0.05" 
+              value={edgeOpacity} 
+              onChange={(e) => setEdgeOpacity(parseFloat(e.target.value))} 
+            />
+            <span className="slider-value">{edgeOpacity.toFixed(2)}</span>
           </div>
           <SearchBar onSearch={setSearchQuery} />
           <SyncButton onSync={syncGraph} loading={loading} />
@@ -59,6 +73,7 @@ function App() {
           data={filteredData} 
           onNodeClick={setSelectedNoteId} 
           edgeThickness={edgeThickness}
+          edgeOpacity={edgeOpacity}
         />
         <NotePreview 
           noteId={selectedNoteId} 
