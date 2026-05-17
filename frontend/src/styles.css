@@ -39,6 +39,38 @@
   align-items: center;
 }
 
+.slider-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: #333;
+}
+
+.slider-control input[type="range"] {
+  width: 100px;
+  height: 4px;
+  -webkit-appearance: none;
+  background: #d2d2d7;
+  border-radius: 2px;
+  outline: none;
+}
+
+.slider-control input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  background: #0071e3;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.slider-value {
+  min-width: 25px;
+  font-family: monospace;
+  color: #86868b;
+}
+
 .app-main {
   flex: 1;
   position: relative;
@@ -49,6 +81,7 @@
 .graph-container {
   flex: 1;
   height: 100%;
+  background-color: #fafafa;
 }
 
 .note-preview {

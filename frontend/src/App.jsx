@@ -10,6 +10,7 @@ function App() {
   const { graphData, loading, error, syncGraph } = useGraph();
   const [selectedNoteId, setSelectedNoteId] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [edgeThickness, setEdgeThickness] = useState(1.0);
 
   const filteredData = (function() {
     if (!searchQuery) return graphData;
@@ -34,6 +35,19 @@ function App() {
           </div>
         </div>
         <div className="controls">
+          <div className="slider-control">
+            <label htmlFor="edge-thickness">Edge Thickness</label>
+            <input 
+              id="edge-thickness"
+              type="range" 
+              min="0.1" 
+              max="5.0" 
+              step="0.1" 
+              value={edgeThickness} 
+              onChange={(e) => setEdgeThickness(parseFloat(e.target.value))} 
+            />
+            <span className="slider-value">{edgeThickness.toFixed(1)}</span>
+          </div>
           <SearchBar onSearch={setSearchQuery} />
           <SyncButton onSync={syncGraph} loading={loading} />
         </div>
@@ -44,6 +58,7 @@ function App() {
         <Graph 
           data={filteredData} 
           onNodeClick={setSelectedNoteId} 
+          edgeThickness={edgeThickness}
         />
         <NotePreview 
           noteId={selectedNoteId} 
