@@ -6,7 +6,14 @@ const SyncButton = ({ onSync, loading }) => {
       disabled={loading}
       className="sync-button"
     >
-      {loading ? 'Syncing...' : 'Sync Notes'}
+      {loading ? (
+        <>
+          <span className="spinner"></span>
+          <span>Syncing...</span>
+        </>
+      ) : (
+        'Sync Notes'
+      )}
     </button>
   );
 };
