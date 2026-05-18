@@ -34,14 +34,14 @@ function App() {
     // Filter by search query
     if (searchQuery) {
       const lowerQuery = searchQuery.toLowerCase();
-      nodes = nodes.filter(node => 
+      nodes = nodes.filter(node =>
         node.label.toLowerCase().includes(lowerQuery)
       );
     }
 
     // Ensure edges only point to existing nodes
     const nodeIds = new Set(nodes.map(n => n.id));
-    edges = edges.filter(edge => 
+    edges = edges.filter(edge =>
       nodeIds.has(edge.source) && nodeIds.has(edge.target)
     );
 
@@ -61,47 +61,47 @@ function App() {
         <div className="controls">
           <div className="control-group">
             <label className="toggle-control">
-              <input 
-                type="checkbox" 
-                checked={darkMode} 
-                onChange={(e) => setDarkMode(e.target.checked)} 
+              <input
+                type="checkbox"
+                checked={darkMode}
+                onChange={(e) => setDarkMode(e.target.checked)}
               />
               Dark Mode
             </label>
             <label className="toggle-control">
-              <input 
-                type="checkbox" 
-                checked={hideOrphans} 
-                onChange={(e) => setHideOrphans(e.target.checked)} 
+              <input
+                type="checkbox"
+                checked={hideOrphans}
+                onChange={(e) => setHideOrphans(e.target.checked)}
               />
               Hide Orphans
             </label>
           </div>
-          
+
           <div className="control-group">
             <div className="slider-control">
               <label htmlFor="node-size">Node Size</label>
-              <input 
+              <input
                 id="node-size"
-                type="range" 
-                min="0.5" 
-                max="4.0" 
-                step="0.1" 
-                value={nodeSize} 
-                onChange={(e) => setNodeSize(parseFloat(e.target.value))} 
+                type="range"
+                min="0.5"
+                max="4.0"
+                step="0.1"
+                value={nodeSize}
+                onChange={(e) => setNodeSize(parseFloat(e.target.value))}
               />
               <span className="slider-value">{nodeSize.toFixed(1)}</span>
             </div>
             <div className="slider-control">
-              <label htmlFor="node-opacity">Node Alpha</label>
-              <input 
+              <label htmlFor="node-opacity">Node Opacity</label>
+              <input
                 id="node-opacity"
-                type="range" 
-                min="0.1" 
-                max="1.0" 
-                step="0.05" 
-                value={nodeOpacity} 
-                onChange={(e) => setNodeOpacity(parseFloat(e.target.value))} 
+                type="range"
+                min="0.1"
+                max="1.0"
+                step="0.05"
+                value={nodeOpacity}
+                onChange={(e) => setNodeOpacity(parseFloat(e.target.value))}
               />
               <span className="slider-value">{nodeOpacity.toFixed(2)}</span>
             </div>
@@ -110,32 +110,32 @@ function App() {
           <div className="control-group">
             <div className="slider-control">
               <label htmlFor="edge-thickness">Edge Thick</label>
-              <input 
+              <input
                 id="edge-thickness"
-                type="range" 
-                min="0.1" 
-                max="5.0" 
-                step="0.1" 
-                value={edgeThickness} 
-                onChange={(e) => setEdgeThickness(parseFloat(e.target.value))} 
+                type="range"
+                min="0.1"
+                max="5.0"
+                step="0.1"
+                value={edgeThickness}
+                onChange={(e) => setEdgeThickness(parseFloat(e.target.value))}
               />
               <span className="slider-value">{edgeThickness.toFixed(1)}</span>
             </div>
             <div className="slider-control">
               <label htmlFor="edge-opacity">Edge Alpha</label>
-              <input 
+              <input
                 id="edge-opacity"
-                type="range" 
-                min="0.0" 
-                max="1.0" 
-                step="0.05" 
-                value={edgeOpacity} 
-                onChange={(e) => setEdgeOpacity(parseFloat(e.target.value))} 
+                type="range"
+                min="0.0"
+                max="1.0"
+                step="0.05"
+                value={edgeOpacity}
+                onChange={(e) => setEdgeOpacity(parseFloat(e.target.value))}
               />
               <span className="slider-value">{edgeOpacity.toFixed(2)}</span>
             </div>
           </div>
-          
+
           <SearchBar onSearch={setSearchQuery} />
           <SyncButton onSync={syncGraph} loading={loading} />
         </div>
@@ -143,18 +143,18 @@ function App() {
 
       <main className="app-main">
         {error && <div className="error-message">{error}</div>}
-        <Graph 
-          data={filteredData} 
-          onNodeClick={setSelectedNoteId} 
+        <Graph
+          data={filteredData}
+          onNodeClick={setSelectedNoteId}
           edgeThickness={edgeThickness}
           edgeOpacity={edgeOpacity}
           nodeSize={nodeSize}
           nodeOpacity={nodeOpacity}
           darkMode={darkMode}
         />
-        <NotePreview 
-          noteId={selectedNoteId} 
-          onClose={() => setSelectedNoteId(null)} 
+        <NotePreview
+          noteId={selectedNoteId}
+          onClose={() => setSelectedNoteId(null)}
         />
       </main>
     </div>
