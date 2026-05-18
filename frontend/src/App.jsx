@@ -12,6 +12,8 @@ function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [edgeThickness, setEdgeThickness] = useState(1.0);
   const [edgeOpacity, setEdgeOpacity] = useState(0.3);
+  const [nodeSize, setNodeSize] = useState(1.0);
+  const [nodeOpacity, setNodeOpacity] = useState(1.0);
   const [darkMode, setDarkMode] = useState(false);
   const [hideOrphans, setHideOrphans] = useState(false);
 
@@ -78,7 +80,36 @@ function App() {
           
           <div className="control-group">
             <div className="slider-control">
-              <label htmlFor="edge-thickness">Thickness</label>
+              <label htmlFor="node-size">Node Size</label>
+              <input 
+                id="node-size"
+                type="range" 
+                min="0.5" 
+                max="4.0" 
+                step="0.1" 
+                value={nodeSize} 
+                onChange={(e) => setNodeSize(parseFloat(e.target.value))} 
+              />
+              <span className="slider-value">{nodeSize.toFixed(1)}</span>
+            </div>
+            <div className="slider-control">
+              <label htmlFor="node-opacity">Node Alpha</label>
+              <input 
+                id="node-opacity"
+                type="range" 
+                min="0.1" 
+                max="1.0" 
+                step="0.05" 
+                value={nodeOpacity} 
+                onChange={(e) => setNodeOpacity(parseFloat(e.target.value))} 
+              />
+              <span className="slider-value">{nodeOpacity.toFixed(2)}</span>
+            </div>
+          </div>
+
+          <div className="control-group">
+            <div className="slider-control">
+              <label htmlFor="edge-thickness">Edge Thick</label>
               <input 
                 id="edge-thickness"
                 type="range" 
@@ -91,7 +122,7 @@ function App() {
               <span className="slider-value">{edgeThickness.toFixed(1)}</span>
             </div>
             <div className="slider-control">
-              <label htmlFor="edge-opacity">Darkness</label>
+              <label htmlFor="edge-opacity">Edge Alpha</label>
               <input 
                 id="edge-opacity"
                 type="range" 
@@ -117,6 +148,8 @@ function App() {
           onNodeClick={setSelectedNoteId} 
           edgeThickness={edgeThickness}
           edgeOpacity={edgeOpacity}
+          nodeSize={nodeSize}
+          nodeOpacity={nodeOpacity}
           darkMode={darkMode}
         />
         <NotePreview 

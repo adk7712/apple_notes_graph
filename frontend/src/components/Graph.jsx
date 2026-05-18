@@ -6,17 +6,37 @@ import euler from 'cytoscape-euler';
 // Register euler extension
 cytoscape.use(euler);
 
-const Graph = ({ data, onNodeClick, edgeThickness = 1.0, edgeOpacity = 0.3, darkMode = false }) => {
+const Graph = ({ 
+  data, 
+  onNodeClick, 
+  edgeThickness = 1.0, 
+  edgeOpacity = 0.3, 
+  nodeSize = 1.0,
+  nodeOpacity = 1.0,
+  darkMode = false 
+}) => {
   const [cy, setCy] = useState(null);
 
   const elements = useMemo(() => {
-    const nodes = data.nodes.map(node => ({
-      data: { 
-        id: node.id, 
-        label: node.label,
-        weight: (node.backlinks_count || 0) + 1
-      }
-    }));
+    // Gruvbox accent colors ranked by "energy"
+    const colors = darkMode 
+      ? ['#a89984', '#b8bb26', '#83a598', '#8ec07c', '#fabd2f', '#fe8019', '#d3869b'] // gray -> green -> blue -> aqua -> yellow -> orange -> purple
+      : ['#7c6f64', '#98971a', '#458588', '#689d6a', '#d79921', '#af3a03', '#b16286'];
+
+    const nodes = data.nodes.map((node) => {
+      const weight = (node.backlinks_count || 0);
+      // Map weight to color index: 0->0, 1->1, 2->2, 3->3, 4->4, 5->5, 6+ -> 6
+      const colorIndex = Math.min(weight, colors.length - 1);
+      
+      return {
+        data: { 
+          id: node.id, 
+          label: node.label,
+          weight: weight + 1,
+          color: colors[colorIndex]
+        }
+      };
+    });
 
     const edges = data.edges.map((edge, index) => ({
       data: { 
@@ -27,27 +47,28 @@ const Graph = ({ data, onNodeClick, edgeThickness = 1.0, edgeOpacity = 0.3, dark
     }));
 
     return [...nodes, ...edges];
-  }, [data]);
+  }, [data, darkMode]);
 
   const stylesheet = useMemo(() => {
-    const nodeColor = darkMode ? '#ebdbb2' : '#3c3836'; // fg1 vs fg1 (light)
-    const nodeBg = darkMode ? '#504945' : '#bdae93';    // bg4 vs fg3 (light)
-    const edgeColor = darkMode ? '#928374' : '#a89984'; // gray vs fg4 (light)
-    const activeColor = darkMode ? '#fe8019' : '#af3a03'; // orange
-    const borderColor = darkMode ? '#1d2021' : '#f9f5d7'; // bg0_h vs bg0 (light)
+    const nodeColor = darkMode ? '#ebdbb2' : '#3c3836';
+    const edgeColor = darkMode ? '#928374' : '#a89984';
+    const activeColor = darkMode ? '#fe8019' : '#af3a03';
+    const borderColor = darkMode ? '#1d2021' : '#f9f5d7';
+    const hoverEdgeColor = darkMode ? '#fabd2f' : '#d79921'; // Bright Yellow/Gold for hover visibility
 
     return [
       {
         selector: 'node',
         style: {
           'label': 'data(label)',
-          'background-color': nodeBg,
+          'background-color': 'data(color)',
           'color': nodeColor,
           'text-valign': 'bottom',
           'text-halign': 'center',
           'text-margin-y': '4px',
-          'width': 'mapData(weight, 1, 10, 6, 24)',
-          'height': 'mapData(weight, 1, 10, 6, 24)',
+          'width': el => (Math.sqrt(el.data('weight')) * 8 + 4) * nodeSize,
+          'height': el => (Math.sqrt(el.data('weight')) * 8 + 4) * nodeSize,
+          'opacity': nodeOpacity,
           'font-size': '10px',
           'min-zoomed-font-size': '40px',
           'font-family': "'JetBrains Mono', 'Fira Code', monospace",
@@ -71,7 +92,9 @@ const Graph = ({ data, onNodeClick, edgeThickness = 1.0, edgeOpacity = 0.3, dark
           'border-width': 2,
           'border-color': activeColor,
           'border-opacity': 1,
-          'min-zoomed-font-size': '0px'
+          'opacity': 1,
+          'min-zoomed-font-size': '0px',
+          'z-index': 100
         }
       },
       {
@@ -88,9 +111,9 @@ const Graph = ({ data, onNodeClick, edgeThickness = 1.0, edgeOpacity = 0.3, dark
           'width': edgeThickness,
           'line-color': edgeColor,
           'target-arrow-color': edgeColor,
-          'target-arrow-shape': 'none',
-          'curve-style': 'haystack',
-          'haystack-radius': 0,
+          'target-arrow-shape': 'triangle', // Add arrows back since we're using bezier
+          'arrow-scale': 0.6,
+          'curve-style': 'bezier', // Better visual support than haystack
           'opacity': edgeOpacity,
           'z-index': 1
         }
@@ -100,29 +123,23 @@ const Graph = ({ data, onNodeClick, edgeThickness = 1.0, edgeOpacity = 0.3, dark
         style: {
           'width': edgeThickness * 2,
           'line-color': activeColor,
-          'opacity': Math.min(edgeOpacity * 2.5, 1.0)
+          'target-arrow-color': activeColor,
+          'opacity': Math.min(edgeOpacity * 2.5, 1.0),
+          'z-index': 2
         }
       },
       {
-        selector: 'node[weight > 2]',
+        selector: 'edge.hover',
         style: {
-          'background-color': darkMode ? '#bdae93' : '#665c54', // fg3 vs bg3
-          'font-size': '10px',
-          'text-opacity': 1,
-          'min-zoomed-font-size': '40px'
-        }
-      },
-      {
-        selector: 'node[weight > 5]',
-        style: {
-          'background-color': darkMode ? '#d5c4a1' : '#504945', // fg2 vs bg4
-          'font-size': '12px',
-          'text-opacity': 1,
-          'min-zoomed-font-size': '40px'
+          'line-color': hoverEdgeColor,
+          'target-arrow-color': hoverEdgeColor,
+          'opacity': 1.0,
+          'width': Math.max(edgeThickness * 2, 2.0),
+          'z-index': 3
         }
       }
     ];
-  }, [edgeThickness, edgeOpacity, darkMode]);
+  }, [edgeThickness, edgeOpacity, nodeSize, nodeOpacity, darkMode]);
 
   useEffect(() => {
     if (!cy) return;
@@ -183,34 +200,41 @@ const Graph = ({ data, onNodeClick, edgeThickness = 1.0, edgeOpacity = 0.3, dark
     if (!cy) return;
 
     // Mouse over/out effects for better interactivity
-    const handleMouseOver = (evt) => {
+    const handleMouseOverNode = (evt) => {
       const node = evt.target;
       node.style({
         'text-opacity': 1,
         'font-size': '12px',
         'min-zoomed-font-size': '0px', // Show label on hover regardless of zoom
-        'background-color': '#333'
+        'opacity': 1
       });
-      node.connectedEdges().style({
-        'opacity': 0.8,
-        'width': 1.5,
-        'line-color': '#999'
-      });
+      node.connectedEdges().addClass('hover');
     };
 
-    const handleMouseOut = (evt) => {
+    const handleMouseOutNode = (evt) => {
       const node = evt.target;
-      // Revert to original style by removing overrides
       node.removeStyle();
-      node.connectedEdges().removeStyle();
+      node.connectedEdges().removeClass('hover');
     };
 
-    cy.on('mouseover', 'node', handleMouseOver);
-    cy.on('mouseout', 'node', handleMouseOut);
+    const handleMouseOverEdge = (evt) => {
+      evt.target.addClass('hover');
+    };
+
+    const handleMouseOutEdge = (evt) => {
+      evt.target.removeClass('hover');
+    };
+
+    cy.on('mouseover', 'node', handleMouseOverNode);
+    cy.on('mouseout', 'node', handleMouseOutNode);
+    cy.on('mouseover', 'edge', handleMouseOverEdge);
+    cy.on('mouseout', 'edge', handleMouseOutEdge);
 
     return () => {
-      cy.off('mouseover', 'node', handleMouseOver);
-      cy.off('mouseout', 'node', handleMouseOut);
+      cy.off('mouseover', 'node', handleMouseOverNode);
+      cy.off('mouseout', 'node', handleMouseOutNode);
+      cy.off('mouseover', 'edge', handleMouseOverEdge);
+      cy.off('mouseout', 'edge', handleMouseOutEdge);
     };
   }, [cy]);
 
