@@ -30,11 +30,11 @@ const Graph = ({ data, onNodeClick, edgeThickness = 1.0, edgeOpacity = 0.3, dark
   }, [data]);
 
   const stylesheet = useMemo(() => {
-    const nodeColor = darkMode ? '#cccccc' : '#555555';
-    const nodeBg = darkMode ? '#666666' : '#999999';
-    const edgeColor = darkMode ? '#888888' : '#666666';
-    const activeColor = darkMode ? '#0a84ff' : '#0071e3';
-    const borderColor = darkMode ? '#121212' : '#ffffff';
+    const nodeColor = darkMode ? '#ebdbb2' : '#3c3836'; // fg1 vs fg1 (light)
+    const nodeBg = darkMode ? '#504945' : '#bdae93';    // bg4 vs fg3 (light)
+    const edgeColor = darkMode ? '#928374' : '#a89984'; // gray vs fg4 (light)
+    const activeColor = darkMode ? '#fe8019' : '#af3a03'; // orange
+    const borderColor = darkMode ? '#1d2021' : '#f9f5d7'; // bg0_h vs bg0 (light)
 
     return [
       {
@@ -50,13 +50,13 @@ const Graph = ({ data, onNodeClick, edgeThickness = 1.0, edgeOpacity = 0.3, dark
           'height': 'mapData(weight, 1, 10, 6, 24)',
           'font-size': '10px',
           'min-zoomed-font-size': '40px',
-          'font-family': '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+          'font-family': "'JetBrains Mono', 'Fira Code', monospace",
           'text-opacity': 1,
           'overlay-padding': '6px',
           'z-index': 10,
           'border-width': 1,
           'border-color': borderColor,
-          'border-opacity': 0.5,
+          'border-opacity': 0.8,
           'text-wrap': 'ellipsis',
           'text-max-width': '80px'
         }
@@ -106,7 +106,7 @@ const Graph = ({ data, onNodeClick, edgeThickness = 1.0, edgeOpacity = 0.3, dark
       {
         selector: 'node[weight > 2]',
         style: {
-          'background-color': darkMode ? '#888888' : '#666666',
+          'background-color': darkMode ? '#bdae93' : '#665c54', // fg3 vs bg3
           'font-size': '10px',
           'text-opacity': 1,
           'min-zoomed-font-size': '40px'
@@ -115,7 +115,7 @@ const Graph = ({ data, onNodeClick, edgeThickness = 1.0, edgeOpacity = 0.3, dark
       {
         selector: 'node[weight > 5]',
         style: {
-          'background-color': darkMode ? '#aaaaaa' : '#444444',
+          'background-color': darkMode ? '#d5c4a1' : '#504945', // fg2 vs bg4
           'font-size': '12px',
           'text-opacity': 1,
           'min-zoomed-font-size': '40px'
