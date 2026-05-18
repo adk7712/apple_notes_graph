@@ -8,7 +8,7 @@ This application adds an interactive knowledge graph visualization to your Apple
 
 The application follows a simple three-step workflow:
 
-1.  **Direct Extraction**: The backend uses AppleScript to perform a lightning-fast batch fetch of every note across all your Apple Notes accounts and folders.
+1.  **Direct Extraction**: The backend uses AppleScript to perform a batch fetch of every note on Apple Notes.
 2.  **Backlink Parsing**: Each note's content is cleaned and scanned for the `[[Note Name]]` syntax. The app automatically resolves these names to create connections.
 3.  **Visualization**: Data is rendered in an interactive, fluid physics-based graph using the Euler layout engine.
 
