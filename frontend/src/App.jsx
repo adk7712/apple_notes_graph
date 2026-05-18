@@ -12,56 +12,99 @@ function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [edgeThickness, setEdgeThickness] = useState(1.0);
   const [edgeOpacity, setEdgeOpacity] = useState(0.3);
+  const [darkMode, setDarkMode] = useState(false);
+  const [hideOrphans, setHideOrphans] = useState(false);
 
   const filteredData = (function() {
-    if (!searchQuery) return graphData;
-    const lowerQuery = searchQuery.toLowerCase();
-    const filteredNodes = graphData.nodes.filter(node => 
-      node.label.toLowerCase().includes(lowerQuery)
-    );
-    const nodeIds = new Set(filteredNodes.map(n => n.id));
-    const filteredEdges = graphData.edges.filter(edge => 
+    let nodes = graphData.nodes;
+    let edges = graphData.edges;
+
+    // Filter by orphan status if requested
+    if (hideOrphans) {
+      const connectedNodeIds = new Set();
+      edges.forEach(edge => {
+        connectedNodeIds.add(edge.source);
+        connectedNodeIds.add(edge.target);
+      });
+      nodes = nodes.filter(node => connectedNodeIds.has(node.id));
+    }
+
+    // Filter by search query
+    if (searchQuery) {
+      const lowerQuery = searchQuery.toLowerCase();
+      nodes = nodes.filter(node => 
+        node.label.toLowerCase().includes(lowerQuery)
+      );
+    }
+
+    // Ensure edges only point to existing nodes
+    const nodeIds = new Set(nodes.map(n => n.id));
+    edges = edges.filter(edge => 
       nodeIds.has(edge.source) && nodeIds.has(edge.target)
     );
-    return { nodes: filteredNodes, edges: filteredEdges };
+
+    return { nodes, edges };
   })();
 
   return (
-    <div className="app-container">
+    <div className={`app-container ${darkMode ? 'dark-mode' : ''}`}>
       <header className="app-header">
         <div className="header-left">
           <h1>Apple Notes Graph</h1>
           <div className="stats">
-            {graphData.nodes.length} nodes, {graphData.edges.length} edges
+            {filteredData.nodes.length} nodes, {filteredData.edges.length} edges
+            {hideOrphans && ` (${graphData.nodes.length - filteredData.nodes.length} orphans hidden)`}
           </div>
         </div>
         <div className="controls">
-          <div className="slider-control">
-            <label htmlFor="edge-thickness">Thickness</label>
-            <input 
-              id="edge-thickness"
-              type="range" 
-              min="0.1" 
-              max="5.0" 
-              step="0.1" 
-              value={edgeThickness} 
-              onChange={(e) => setEdgeThickness(parseFloat(e.target.value))} 
-            />
-            <span className="slider-value">{edgeThickness.toFixed(1)}</span>
+          <div className="control-group">
+            <label className="toggle-control">
+              <input 
+                type="checkbox" 
+                checked={darkMode} 
+                onChange={(e) => setDarkMode(e.target.checked)} 
+              />
+              Dark Mode
+            </label>
+            <label className="toggle-control">
+              <input 
+                type="checkbox" 
+                checked={hideOrphans} 
+                onChange={(e) => setHideOrphans(e.target.checked)} 
+              />
+              Hide Orphans
+            </label>
           </div>
-          <div className="slider-control">
-            <label htmlFor="edge-opacity">Darkness</label>
-            <input 
-              id="edge-opacity"
-              type="range" 
-              min="0.0" 
-              max="1.0" 
-              step="0.05" 
-              value={edgeOpacity} 
-              onChange={(e) => setEdgeOpacity(parseFloat(e.target.value))} 
-            />
-            <span className="slider-value">{edgeOpacity.toFixed(2)}</span>
+          
+          <div className="control-group">
+            <div className="slider-control">
+              <label htmlFor="edge-thickness">Thickness</label>
+              <input 
+                id="edge-thickness"
+                type="range" 
+                min="0.1" 
+                max="5.0" 
+                step="0.1" 
+                value={edgeThickness} 
+                onChange={(e) => setEdgeThickness(parseFloat(e.target.value))} 
+              />
+              <span className="slider-value">{edgeThickness.toFixed(1)}</span>
+            </div>
+            <div className="slider-control">
+              <label htmlFor="edge-opacity">Darkness</label>
+              <input 
+                id="edge-opacity"
+                type="range" 
+                min="0.0" 
+                max="1.0" 
+                step="0.05" 
+                value={edgeOpacity} 
+                onChange={(e) => setEdgeOpacity(parseFloat(e.target.value))} 
+              />
+              <span className="slider-value">{edgeOpacity.toFixed(2)}</span>
+            </div>
           </div>
+          
           <SearchBar onSearch={setSearchQuery} />
           <SyncButton onSync={syncGraph} loading={loading} />
         </div>
@@ -74,6 +117,7 @@ function App() {
           onNodeClick={setSelectedNoteId} 
           edgeThickness={edgeThickness}
           edgeOpacity={edgeOpacity}
+          darkMode={darkMode}
         />
         <NotePreview 
           noteId={selectedNoteId} 
