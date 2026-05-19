@@ -4,6 +4,11 @@
 
 This application adds an interactive knowledge graph visualization to your Apple Notes. It extracts backlinks using an Obsidian-style `[[Note Name]]` syntax to build a visual network of your thoughts and ideas.
 
+<br>
+
+<img src='docs/image1.jpeg'>
+
+
 ## How it Works
 
 The application follows a simple three-step workflow:
@@ -19,6 +24,10 @@ The application follows a simple three-step workflow:
 -   **Intelligent Filtering**: Toggle **Hide Orphans** to focus only on connected clusters, or use the **Search Bar** to highlight specific notes.
 -   **Customization**: Real-time sliders to adjust node size, node opacity, edge thickness, and edge darkness.
 -   **Interactive Highlighting**: Hovering over nodes or edges triggers vibrant highlights for easy traceability of connections.
+
+<br>
+
+<img src='docs/image2.jpeg'>
 
 ## Quick Start
 
@@ -48,6 +57,10 @@ Open `http://localhost:5173` in the browser and click the **Sync Notes** button.
 -   **Navigation**: Use your mouse wheel or trackpad to zoom. Click and drag nodes to move them; the physics engine will fluidly pull them back into the cluster.
 -   **Smart Reveal**: Note labels are hidden when zoomed out to prevent clutter, and automatically reveal as you zoom in closer.
 -   **Note Preview**: Click any node to open a sidebar containing the cleaned text of the note and its specific metadata (no attachment support yet).
+
+<br>
+
+<img src='docs/image3.jpeg'>
 
 ## Known Limitations
 
