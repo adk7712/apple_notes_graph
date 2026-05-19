@@ -62,7 +62,7 @@ Open `http://localhost:5173` in the browser and click the **Sync Notes** button.
 
 <img src='docs/image3.jpeg'>
 
-## Known Limitations
+## Limitations
 
 -   **macOS Only**: Relies on `osascript` to interface with the local Apple Notes application.
 -   **Read-Only**: This POC only performs the R of CRUD. It can only read your notes. It cannot create, edit, or delete notes in your Apple Notes app.
